@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pop Arcade</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="spark-field" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="logo" href="#home" aria-label="Pop Arcade home">
+        <span>POP</span><strong>ARCADE</strong>
+      </a>
+      <nav aria-label="Game navigation">
+        <a href="#hamburger">Hamburger</a>
+        <a href="#quiz">Impossible Quiz</a>
+        <a href="#chance">One Chance</a>
+        <a href="#snake">Snake</a>
+        <a href="#bomb">Bomb Drop</a>
+      </nav>
+    </header>
+
+    <main id="home">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">For GEO-FS pilots, tank drivers, and silly sky legends</p>
+          <h1>Five tiny games. Maximum wobble.</h1>
+          <p>
+            Smash burgers, survive trick questions, make one high-stakes sky choice, steer a neon snake, and drop cartoon bombs on targets.
+            Bright, weird, fast, and made to be clicked.
+          </p>
+          <div class="hero-actions">
+            <a class="button hot" href="#hamburger">Start playing</a>
+            <a class="button cool" href="#games">Pick a game</a>
+          </div>
+        </div>
+        <div class="arcade-machine" aria-label="Animated arcade machine">
+          <div class="screen">
+            <span class="scanline"></span>
+            <div class="pixel-burger">🍔</div>
+            <div class="pixel-text">CLICK<br />QUIZ<br />CHANCE<br />SNAKE<br />BOMB</div>
+          </div>
+          <div class="controls">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="games" class="game-strip" aria-label="Available games">
+        <a class="game-jump red" href="#hamburger">
+          <span>01</span>
+          <strong>Hamburger Clicker</strong>
+        </a>
+        <a class="game-jump yellow" href="#quiz">
+          <span>02</span>
+          <strong>The Impossible Quiz</strong>
+        </a>
+        <a class="game-jump blue" href="#chance">
+          <span>03</span>
+          <strong>One Chance</strong>
+        </a>
+        <a class="game-jump green" href="#snake">
+          <span>04</span>
+          <strong>Snake</strong>
+        </a>
+        <a class="game-jump orange" href="#bomb">
+          <span>05</span>
+          <strong>Bomb Drop</strong>
+        </a>
+      </section>
+
+      <section id="hamburger" class="game-section burger-zone">
+        <div class="game-header">
+          <p>Game 01</p>
+          <h2>Hamburger Clicker</h2>
+        </div>
+        <div class="play-area clicker-layout">
+          <div class="scoreboard">
+            <div>
+              <span>Burgers</span>
+              <strong id="burgerScore">0</strong>
+            </div>
+            <div>
+              <span>Per click</span>
+              <strong id="burgerPower">1</strong>
+            </div>
+            <div>
+              <span>Per second</span>
+              <strong id="burgerAuto">0</strong>
+            </div>
+          </div>
+          <button id="burgerButton" class="burger-button" type="button" aria-label="Click hamburger">
+            <span class="bun top"></span>
+            <span class="sauce"></span>
+            <span class="lettuce"></span>
+            <span class="cheese"></span>
+            <span class="patty"></span>
+            <span class="bun bottom"></span>
+          </button>
+          <div>
+            <p id="shopStatus" class="shop-status">More upgrades unlock as your burger pile grows.</p>
+            <div id="shop" class="shop"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz" class="game-section quiz-zone">
+        <div class="game-header">
+          <p>Game 02</p>
+          <h2>The Impossible Quiz</h2>
+        </div>
+        <div class="play-area quiz-card">
+          <div class="quiz-topline">
+            <span id="quizProgress">Question 1 of 5</span>
+            <span id="quizLives">Lives: 3</span>
+          </div>
+          <h3 id="quizQuestion">Loading question...</h3>
+          <div id="quizAnswers" class="answer-grid"></div>
+          <p id="quizMessage" class="game-message">Choose carefully. It is called impossible for a reason.</p>
+          <button id="quizReset" class="mini-button" type="button">Restart quiz</button>
+        </div>
+      </section>
+
+      <section id="chance" class="game-section chance-zone">
+        <div class="game-header">
+          <p>Game 03</p>
+          <h2>One Chance</h2>
+        </div>
+        <div class="play-area chance-layout">
+          <div class="sky-window">
+            <div id="plane" class="plane"></div>
+            <div id="chanceTarget" class="chance-target">?</div>
+          </div>
+          <div class="chance-panel">
+            <p id="chanceStory">Your silly sky engine is wobbling. Pick one move. No takebacks.</p>
+            <div class="chance-actions">
+              <button data-choice="cloud" type="button">Dive through cloud</button>
+              <button data-choice="boost" type="button">Rocket boost</button>
+              <button data-choice="tank" type="button">Call Tiger Tank backup</button>
+              <button data-choice="storm" type="button">Fly into storm gate</button>
+              <button data-choice="burger" type="button">Follow burger beacon</button>
+              <button data-choice="barrel" type="button">Do a barrel roll</button>
+            </div>
+            <button id="chanceReset" class="mini-button" type="button">Reset the chance</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="snake" class="game-section snake-zone">
+        <div class="game-header">
+          <p>Game 04</p>
+          <h2>Snake</h2>
+        </div>
+        <div class="play-area snake-layout">
+          <div class="snake-board-wrap">
+            <canvas id="snakeCanvas" width="360" height="360" aria-label="Snake game board"></canvas>
+          </div>
+          <div class="snake-panel">
+            <div class="scoreboard snake-scoreboard">
+              <div>
+                <span>Snake Score</span>
+                <strong id="snakeScore">0</strong>
+              </div>
+              <div>
+                <span>Status</span>
+                <strong id="snakeStatus">Ready</strong>
+              </div>
+            </div>
+            <div class="snake-controls" aria-label="Snake controls">
+              <button data-snake="up" type="button">Up</button>
+              <button data-snake="left" type="button">Left</button>
+              <button data-snake="right" type="button">Right</button>
+              <button data-snake="down" type="button">Down</button>
+            </div>
+            <button id="snakeStart" class="mini-button" type="button">Start snake</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="bomb" class="game-section bomb-zone">
+        <div class="game-header">
+          <p>Game 05</p>
+          <h2>Bomb Drop</h2>
+        </div>
+        <div class="play-area bomb-layout">
+          <div class="bomb-board-wrap">
+            <canvas id="bombCanvas" width="520" height="340" aria-label="Bomb Drop game board"></canvas>
+          </div>
+          <div class="bomb-panel">
+            <div class="scoreboard snake-scoreboard">
+              <div>
+                <span>Targets</span>
+                <strong id="bombScore">0</strong>
+              </div>
+              <div>
+                <span>Status</span>
+                <strong id="bombStatus">Ready</strong>
+              </div>
+            </div>
+            <div class="bomb-controls" aria-label="Bomb Drop controls">
+              <button data-bomb="left" type="button">Left</button>
+              <button data-bomb="drop" type="button">Drop</button>
+              <button data-bomb="right" type="button">Right</button>
+            </div>
+            <button id="bombStart" class="mini-button" type="button">Start Bomb Drop</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>POP ARCADE runs locally in your browser. Loud colors included.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
