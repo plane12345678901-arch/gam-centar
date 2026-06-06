@@ -484,161 +484,146 @@ const bombStatus = document.querySelector("#bombStatus");
 const bombStart = document.querySelector("#bombStart");
 const bombButtons = document.querySelectorAll("[data-bomb]");
 
-let bomberX = 250;
-let bombScoreValue = 0;
-let bombs = [];
-let targets = [];
-let bombTimer = null;
-let bombDirection = 0;
+let nukeLaunches = 0;
+let selectedRegion = 0;
+let nukeImpacts = [];
+let nukeTimer = null;
 
-function resetBombGame() {
-  bomberX = 250;
-  bombScoreValue = 0;
-  bombs = [];
-  targets = [
-    { x: 38, y: 276, width: 58, height: 34, color: "#ff2f92", alive: true },
-    { x: 130, y: 252, width: 70, height: 58, color: "#fff44f", alive: true },
-    { x: 238, y: 274, width: 64, height: 36, color: "#00e5ff", alive: true },
-    { x: 350, y: 246, width: 78, height: 64, color: "#b7ff1a", alive: true },
-    { x: 456, y: 268, width: 46, height: 42, color: "#ff9d00", alive: true },
-  ];
-  bombScore.textContent = "0";
-  bombStatus.textContent = "Ready";
-  bombStart.textContent = "Start Bomb Drop";
-  drawBombGame();
+const worldRegions = [
+  { name: "North America", x: 132, y: 124, width: 145, height: 78, color: "#b7ff1a" },
+  { name: "South America", x: 210, y: 248, width: 70, height: 112, color: "#ff9d00" },
+  { name: "Europe", x: 314, y: 128, width: 74, height: 52, color: "#fff44f" },
+  { name: "Africa", x: 340, y: 226, width: 98, height: 118, color: "#ff2f92" },
+  { name: "Asia", x: 452, y: 144, width: 170, height: 102, color: "#00e5ff" },
+  { name: "Australia", x: 510, y: 304, width: 88, height: 46, color: "#7b2cff" },
+];
+
+function drawBlob(region, isSelected) {
+  bombContext.save();
+  bombContext.translate(region.x, region.y);
+  bombContext.fillStyle = region.color;
+  bombContext.strokeStyle = isSelected ? "#fffdf3" : "#180024";
+  bombContext.lineWidth = isSelected ? 7 : 4;
+  bombContext.beginPath();
+  bombContext.ellipse(0, 0, region.width / 2, region.height / 2, 0.15, 0, Math.PI * 2);
+  bombContext.fill();
+  bombContext.stroke();
+
+  bombContext.fillStyle = "#180024";
+  bombContext.font = "900 13px Arial";
+  bombContext.textAlign = "center";
+  bombContext.fillText(region.name, 0, 5);
+  bombContext.restore();
 }
 
-function drawBombGame() {
+function drawNukeSimulator() {
   bombContext.fillStyle = "#13001f";
   bombContext.fillRect(0, 0, bombCanvas.width, bombCanvas.height);
 
-  bombContext.fillStyle = "#00e5ff";
-  bombContext.fillRect(0, 218, bombCanvas.width, 6);
+  bombContext.fillStyle = "#003d5a";
+  bombContext.fillRect(0, 0, bombCanvas.width, bombCanvas.height);
 
-  bombContext.fillStyle = "#fffdf3";
-  for (let index = 0; index < 16; index += 1) {
-    const x = (index * 47 + 18) % bombCanvas.width;
-    const y = 24 + (index % 4) * 26;
-    bombContext.fillRect(x, y, 5, 5);
-  }
-
-  bombContext.fillStyle = "#fff44f";
-  bombContext.fillRect(bomberX - 28, 46, 56, 24);
-  bombContext.fillStyle = "#ff2f92";
-  bombContext.fillRect(bomberX - 6, 28, 24, 18);
-  bombContext.fillStyle = "#00e5ff";
-  bombContext.fillRect(bomberX - 44, 56, 88, 10);
-
-  bombs.forEach((bomb) => {
-    bombContext.fillStyle = "#fffdf3";
+  bombContext.fillStyle = "rgba(0, 229, 255, 0.28)";
+  for (let index = 0; index < 7; index += 1) {
     bombContext.beginPath();
-    bombContext.arc(bomb.x, bomb.y, 10, 0, Math.PI * 2);
+    bombContext.arc(70 + index * 86, 190, 170 + (index % 2) * 22, 0, Math.PI * 2);
     bombContext.fill();
-    bombContext.fillStyle = "#ff2f92";
-    bombContext.fillRect(bomb.x - 2, bomb.y - 16, 4, 8);
-  });
-
-  targets.forEach((target) => {
-    if (!target.alive) {
-      bombContext.fillStyle = "#7b2cff";
-      bombContext.fillRect(target.x + 8, target.y + target.height - 8, target.width - 16, 8);
-      return;
-    }
-
-    bombContext.fillStyle = target.color;
-    bombContext.fillRect(target.x, target.y, target.width, target.height);
-    bombContext.strokeStyle = "#fffdf3";
-    bombContext.lineWidth = 4;
-    bombContext.strokeRect(target.x + 6, target.y + 6, target.width - 12, target.height - 12);
-  });
-}
-
-function dropBomb() {
-  if (!bombTimer) startBombGame();
-  if (bombs.length >= 3) return;
-
-  bombs.push({ x: bomberX, y: 78, speed: 7 });
-  bombStatus.textContent = "Bomb away";
-}
-
-function stepBombGame() {
-  bomberX += bombDirection * 8;
-  bomberX = Math.max(45, Math.min(bombCanvas.width - 45, bomberX));
-
-  bombs.forEach((bomb) => {
-    bomb.y += bomb.speed;
-  });
-
-  bombs.forEach((bomb) => {
-    targets.forEach((target) => {
-      if (!target.alive) return;
-
-      const hitX = bomb.x >= target.x && bomb.x <= target.x + target.width;
-      const hitY = bomb.y + 10 >= target.y && bomb.y - 10 <= target.y + target.height;
-      if (hitX && hitY) {
-        target.alive = false;
-        bomb.hit = true;
-        bombScoreValue += 1;
-        bombScore.textContent = bombScoreValue;
-        bombStatus.textContent = "Boom";
-      }
-    });
-  });
-
-  bombs = bombs.filter((bomb) => !bomb.hit && bomb.y < bombCanvas.height + 20);
-
-  if (targets.every((target) => !target.alive)) {
-    bombStatus.textContent = "Cleared";
-    clearInterval(bombTimer);
-    bombTimer = null;
-    bombStart.textContent = "Restart Bomb Drop";
   }
 
-  drawBombGame();
+  worldRegions.forEach((region, index) => drawBlob(region, index === selectedRegion));
+
+  nukeImpacts.forEach((impact) => {
+    const alpha = Math.max(0, 1 - impact.radius / impact.maxRadius);
+    bombContext.strokeStyle = `rgba(255, 244, 79, ${alpha})`;
+    bombContext.lineWidth = 7;
+    bombContext.beginPath();
+    bombContext.arc(impact.x, impact.y, impact.radius, 0, Math.PI * 2);
+    bombContext.stroke();
+
+    bombContext.fillStyle = `rgba(255, 47, 146, ${alpha * 0.75})`;
+    bombContext.beginPath();
+    bombContext.arc(impact.x, impact.y, impact.radius * 0.45, 0, Math.PI * 2);
+    bombContext.fill();
+
+    bombContext.fillStyle = "#fffdf3";
+    bombContext.font = "900 18px Arial";
+    bombContext.textAlign = "center";
+    bombContext.fillText("BOOM", impact.x, impact.y + 6);
+  });
 }
 
-function startBombGame() {
-  if (bombStatus.textContent === "Cleared") resetBombGame();
-  if (bombTimer) return;
-
-  bombStatus.textContent = "Flying";
-  bombStart.textContent = "Bomb Drop running";
-  bombTimer = setInterval(stepBombGame, 60);
+function updateNukeStatus() {
+  bombScore.textContent = nukeLaunches;
+  bombStatus.textContent = worldRegions[selectedRegion].name;
 }
 
-bombStart.addEventListener("click", startBombGame);
+function resetBombGame() {
+  nukeLaunches = 0;
+  selectedRegion = 0;
+  nukeImpacts = [];
+  updateNukeStatus();
+  drawNukeSimulator();
+}
+
+function stepNukeSimulator() {
+  nukeImpacts.forEach((impact) => {
+    impact.radius += impact.speed;
+  });
+  nukeImpacts = nukeImpacts.filter((impact) => impact.radius < impact.maxRadius);
+
+  if (nukeImpacts.length === 0) {
+    clearInterval(nukeTimer);
+    nukeTimer = null;
+  }
+
+  drawNukeSimulator();
+}
+
+function startNukeAnimation() {
+  if (nukeTimer) return;
+  nukeTimer = setInterval(stepNukeSimulator, 45);
+}
+
+function selectNukeRegion(step) {
+  selectedRegion = (selectedRegion + step + worldRegions.length) % worldRegions.length;
+  updateNukeStatus();
+  drawNukeSimulator();
+}
+
+function launchNuke() {
+  const region = worldRegions[selectedRegion];
+  nukeLaunches += 1;
+  nukeImpacts.push({
+    x: region.x,
+    y: region.y,
+    radius: 10,
+    maxRadius: Math.max(region.width, region.height) * 0.85,
+    speed: 5,
+  });
+  updateNukeStatus();
+  startNukeAnimation();
+  drawNukeSimulator();
+}
+
+bombStart.addEventListener("click", resetBombGame);
 
 bombButtons.forEach((button) => {
-  button.addEventListener("mousedown", () => {
-    if (button.dataset.bomb === "left") bombDirection = -1;
-    if (button.dataset.bomb === "right") bombDirection = 1;
-    if (button.dataset.bomb === "drop") dropBomb();
-    startBombGame();
-  });
-
-  button.addEventListener("mouseup", () => {
-    bombDirection = 0;
-  });
-
-  button.addEventListener("mouseleave", () => {
-    bombDirection = 0;
+  button.addEventListener("click", () => {
+    if (button.dataset.bomb === "left") selectNukeRegion(-1);
+    if (button.dataset.bomb === "right") selectNukeRegion(1);
+    if (button.dataset.bomb === "drop") launchNuke();
   });
 });
 
 window.addEventListener("keydown", (event) => {
   if (!["a", "A", "d", "D", " "].includes(event.key)) return;
 
-  if (event.key === "a" || event.key === "A") bombDirection = -1;
-  if (event.key === "d" || event.key === "D") bombDirection = 1;
+  if (event.key === "a" || event.key === "A") selectNukeRegion(-1);
+  if (event.key === "d" || event.key === "D") selectNukeRegion(1);
   if (event.key === " ") {
     event.preventDefault();
-    dropBomb();
+    launchNuke();
   }
-  startBombGame();
-});
-
-window.addEventListener("keyup", (event) => {
-  if (["a", "A", "d", "D"].includes(event.key)) bombDirection = 0;
 });
 
 updateBurgerStats();

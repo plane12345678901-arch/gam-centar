@@ -771,6 +771,11 @@ h2 {
   gap: 16px;
 }
 
+.bomb-panel .scoreboard strong {
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  line-height: 1;
+}
+
 .snake-scoreboard {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -814,17 +819,17 @@ h2 {
 }
 
 .bomb-layout {
-  grid-template-columns: minmax(300px, 560px) minmax(260px, 1fr);
+  grid-template-columns: minmax(320px, 660px) minmax(260px, 1fr);
   background: var(--orange);
 }
 
 .bomb-board-wrap {
-  width: min(100%, 560px);
+  width: min(100%, 660px);
 }
 
 #bombCanvas {
   width: 100%;
-  aspect-ratio: 26 / 17;
+  aspect-ratio: 31 / 19;
   display: block;
   background: #13001f;
   border: 5px solid var(--yellow);

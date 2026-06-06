@@ -18,7 +18,7 @@
         <a href="#quiz">Impossible Quiz</a>
         <a href="#chance">One Chance</a>
         <a href="#snake">Snake</a>
-        <a href="#bomb">Bomb Drop</a>
+        <a href="#bomb">Nuke Simulator</a>
       </nav>
     </header>
 
@@ -28,7 +28,7 @@
           <p class="kicker">For GEO-FS pilots, tank drivers, and silly sky legends</p>
           <h1>Five tiny games. Maximum wobble.</h1>
           <p>
-            Smash burgers, survive trick questions, make one high-stakes sky choice, steer a neon snake, and drop cartoon bombs on targets.
+            Smash burgers, survive trick questions, make one high-stakes sky choice, steer a neon snake, and simulate cartoon nukes on a world map.
             Bright, weird, fast, and made to be clicked.
           </p>
           <div class="hero-actions">
@@ -67,7 +67,7 @@
         </a>
         <a class="game-jump orange" href="#bomb">
           <span>05</span>
-          <strong>Bomb Drop</strong>
+          <strong>Nuke Simulator</strong>
         </a>
       </section>
 
@@ -182,29 +182,29 @@
       <section id="bomb" class="game-section bomb-zone">
         <div class="game-header">
           <p>Game 05</p>
-          <h2>Bomb Drop</h2>
+          <h2>Nuke Simulator</h2>
         </div>
         <div class="play-area bomb-layout">
           <div class="bomb-board-wrap">
-            <canvas id="bombCanvas" width="520" height="340" aria-label="Bomb Drop game board"></canvas>
+            <canvas id="bombCanvas" width="620" height="380" aria-label="Cartoon world nuke simulator board"></canvas>
           </div>
           <div class="bomb-panel">
             <div class="scoreboard snake-scoreboard">
               <div>
-                <span>Targets</span>
+                <span>Launches</span>
                 <strong id="bombScore">0</strong>
               </div>
               <div>
-                <span>Status</span>
+                <span>Region</span>
                 <strong id="bombStatus">Ready</strong>
               </div>
             </div>
             <div class="bomb-controls" aria-label="Bomb Drop controls">
-              <button data-bomb="left" type="button">Left</button>
-              <button data-bomb="drop" type="button">Drop</button>
-              <button data-bomb="right" type="button">Right</button>
+              <button data-bomb="left" type="button">Prev</button>
+              <button data-bomb="drop" type="button">Launch</button>
+              <button data-bomb="right" type="button">Next</button>
             </div>
-            <button id="bombStart" class="mini-button" type="button">Start Bomb Drop</button>
+            <button id="bombStart" class="mini-button" type="button">Reset simulation</button>
           </div>
         </div>
       </section>
